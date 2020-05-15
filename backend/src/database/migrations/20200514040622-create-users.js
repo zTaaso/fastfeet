@@ -9,6 +9,7 @@ module.exports = {
                 type: Sequelize.STRING,
                 unique: true,
                 allowNull: false,
+                primaryKey: true,
             },
             password_hash: {
                 type: Sequelize.STRING,
