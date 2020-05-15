@@ -2,13 +2,20 @@ import Recipient from '../models/Recipient';
 
 class RecipientController {
     async store(req, res) {
-        const recipient = await Recipient.create(req.body);
+        const { name, id } = await Recipient.create(req.body);
 
-        return res.json(recipient);
+        return res.json({
+            name,
+            id,
+        });
     }
 
     async index(req, res) {
-        const recipients = await Recipient.findAll();
+        const recipients = await Recipient.findAll({
+            attributes: {
+                exclude: ['updatedAt', 'createdAt'],
+            },
+        });
 
         return res.json(recipients);
     }

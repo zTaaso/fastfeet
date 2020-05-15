@@ -1,16 +1,19 @@
 import { Router } from 'express';
 
-import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import RecipientController from './app/controllers/RecipientController';
+
+import RecipientValidator from './app/validators/RecipientValidator';
+import SessionValidator from './app/validators/SessionValidator';
+
 import authMiddleware from './app/middlewares/auth';
 
 const routes = Router();
 
-routes.get('/user', UserController.read);
-routes.post('/session', SessionController.store);
+routes.post('/session', SessionValidator.store, SessionController.store);
 
-routes.post('/recipient', RecipientController.store);
-routes.get('/recipient', authMiddleware, RecipientController.index);
+routes.use(authMiddleware);
+routes.post('/recipient', RecipientValidator.store, RecipientController.store);
+routes.get('/recipient', RecipientController.index);
 
 export default routes;
