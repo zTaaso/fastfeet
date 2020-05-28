@@ -10,10 +10,10 @@ import authMiddleware from './app/middlewares/auth';
 
 const routes = Router();
 
-routes.post('/session', SessionValidator.store, SessionController.store);
+routes.post('/sessions', SessionValidator.store, SessionController.store);
 
 routes.use(authMiddleware);
-routes.post('/recipient', RecipientValidator.store, RecipientController.store);
-routes.get('/recipient', RecipientController.index);
+routes.post('/recipients', RecipientValidator.store, RecipientController.store);
+routes.get('/recipients', RecipientController.index);
 
 export default routes;
