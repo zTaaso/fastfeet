@@ -7,13 +7,34 @@ import RecipientValidator from './app/validators/RecipientValidator';
 import SessionValidator from './app/validators/SessionValidator';
 
 import authMiddleware from './app/middlewares/auth';
+import DeliveryManValidator from './app/validators/DeliveryManValidator';
+import DeliveryManController from './app/controllers/DeliveryManController';
 
 const routes = Router();
 
 routes.post('/sessions', SessionValidator.store, SessionController.store);
 
 routes.use(authMiddleware);
+
 routes.post('/recipients', RecipientValidator.store, RecipientController.store);
 routes.get('/recipients', RecipientController.index);
+routes.delete('/recipients/:id', RecipientController.delete);
+
+routes.get('/deliveryman', DeliveryManController.index);
+routes.post(
+    '/deliveryman',
+    DeliveryManValidator.store,
+    DeliveryManController.store
+);
+routes.put(
+    '/deliveryman/:id',
+    DeliveryManValidator.update,
+    DeliveryManController.update
+);
+routes.delete(
+    '/deliveryman/:id',
+    DeliveryManValidator.delete,
+    DeliveryManController.delete
+);
 
 export default routes;
