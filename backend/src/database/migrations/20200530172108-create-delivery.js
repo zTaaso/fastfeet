@@ -10,7 +10,6 @@ module.exports = {
             recipient_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                autoIncrement: true,
                 reference: { model: 'recipients', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL',
@@ -18,7 +17,6 @@ module.exports = {
             deliveryman_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                autoIncrement: true,
                 reference: { model: 'delivery_men', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL',
@@ -26,7 +24,6 @@ module.exports = {
             signature_id: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
-                autoIncrement: true,
                 reference: { model: 'files', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL',

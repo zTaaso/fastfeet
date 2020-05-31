@@ -9,6 +9,7 @@ import SessionValidator from './app/validators/SessionValidator';
 import authMiddleware from './app/middlewares/auth';
 import DeliveryManValidator from './app/validators/DeliveryManValidator';
 import DeliveryManController from './app/controllers/DeliveryManController';
+import DeliveryController from './app/controllers/DeliveryController';
 
 const routes = Router();
 
@@ -36,5 +37,8 @@ routes.delete(
     DeliveryManValidator.delete,
     DeliveryManController.delete
 );
+
+routes.get('/delivery', DeliveryController.index);
+routes.post('/delivery', DeliveryController.store);
 
 export default routes;
