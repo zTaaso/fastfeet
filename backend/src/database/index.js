@@ -16,7 +16,12 @@ class Database {
 
     init() {
         this.connection = new Sequelize(databaseConfig);
+
         models.forEach((model) => model.init(this.connection));
+
+        models.forEach((model) => {
+            return model.associate && model.associate(this.connection.models);
+        });
     }
 }
 
