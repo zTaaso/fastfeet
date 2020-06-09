@@ -10,10 +10,13 @@ import authMiddleware from './app/middlewares/auth';
 import DeliveryManValidator from './app/validators/DeliveryManValidator';
 import DeliveryManController from './app/controllers/DeliveryManController';
 import DeliveryController from './app/controllers/DeliveryController';
+import DeliveryManSectionController from './app/controllers/DeliveryManSectionController';
 
 const routes = Router();
 
 routes.post('/sessions', SessionValidator.store, SessionController.store);
+
+routes.get('/deliveryman/:id/deliveries', DeliveryManSectionController.index);
 
 routes.use(authMiddleware);
 
