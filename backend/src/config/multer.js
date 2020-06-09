@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { resolve, extname } from 'path';
+import { resolve } from 'path';
 import crypto from 'crypto';
 
 export default {
