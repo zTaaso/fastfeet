@@ -1,4 +1,7 @@
 import { Router } from 'express';
+import multer from 'multer';
+
+import multerConfig from './config/multer';
 
 import SessionController from './app/controllers/SessionController';
 import RecipientController from './app/controllers/RecipientController';
@@ -11,12 +14,20 @@ import DeliveryManValidator from './app/validators/DeliveryManValidator';
 import DeliveryManController from './app/controllers/DeliveryManController';
 import DeliveryController from './app/controllers/DeliveryController';
 import DeliveryManSectionController from './app/controllers/DeliveryManSectionController';
+import FileController from './app/controllers/FileController';
 
 const routes = Router();
+const upload = multer(multerConfig);
 
 routes.post('/sessions', SessionValidator.store, SessionController.store);
 
 routes.get('/deliveryman/:id/deliveries', DeliveryManSectionController.index);
+routes.put(
+    '/deliveryman/:deliverymanId/delivery/:deliveryId',
+    DeliveryManSectionController.update
+);
+
+routes.post('/files', upload.single('signature'), FileController.store);
 
 routes.use(authMiddleware);
 
