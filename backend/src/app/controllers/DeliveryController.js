@@ -2,6 +2,8 @@ import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
 
+import transporter from '../../config/mail';
+
 class DeliveryController {
     async index(_, res) {
         const deliveries = await Delivery.findAll();
@@ -32,6 +34,13 @@ class DeliveryController {
             product,
         });
 
+        transporter.sendMail({
+            to: deliveryman.email,
+            subject: 'Nova encomenda cadastrada!',
+            text: 'Você possui uma nova entrega já disponível para retirada.',
+            html: `<p> O produto <b>"${delivery.product}"</b> foi cadastrado e está disponível para retirada. </p>`,
+        });
+
         return res.json(delivery);
     }
 
@@ -46,6 +55,22 @@ class DeliveryController {
         }
 
         await delivery.update(req.body);
+
+        return res.json(delivery);
+    }
+
+    async delete(req, res) {
+        const { id } = req.params;
+
+        const delivery = await Delivery.findByPk(id);
+        if (!delivery) {
+            return res
+                .status(400)
+                .json({ error: 'This delivery does not exists.' });
+        }
+
+        delivery.canceled_at = new Date();
+        await delivery.save();
 
         return res.json(delivery);
     }

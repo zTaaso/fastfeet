@@ -19,8 +19,6 @@ class Delivery extends Model {
     }
 
     static associate(models) {
-        console.log(models);
-
         this.belongsTo(models.Recipient, {
             foreignKey: 'recipient_id',
             as: 'recipient',
