@@ -34,6 +34,21 @@ class DeliveryController {
 
         return res.json(delivery);
     }
+
+    async update(req, res) {
+        const { id } = req.params;
+
+        const delivery = await Delivery.findByPk(id);
+        if (!delivery) {
+            return res
+                .status(400)
+                .json({ error: 'This delivery does not exists.' });
+        }
+
+        await delivery.update(req.body);
+
+        return res.json(delivery);
+    }
 }
 
 export default new DeliveryController();
