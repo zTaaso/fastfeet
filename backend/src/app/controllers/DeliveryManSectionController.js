@@ -1,5 +1,8 @@
+import { startOfToday, endOfToday } from 'date-fns';
+import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import DeliveryMan from '../models/DeliveryMan';
+import File from '../models/File';
 
 class DeliveryManSectionController {
     async index(req, res) {
@@ -39,6 +42,7 @@ class DeliveryManSectionController {
             );
         }
 
+        // if canceled filter is passed
         if (isCanceled) {
             parsedDeliveries = deliveries.filter(
                 (delivery) => delivery.canceled_at !== null
@@ -49,7 +53,7 @@ class DeliveryManSectionController {
     }
 
     async update(req, res) {
-        const { start_date, end_date } = req.body;
+        const { start_date, end_date, signature_id } = req.body;
         const { deliverymanId, deliveryId } = req.params;
 
         const deliveryman = await DeliveryMan.findByPk(deliverymanId);
@@ -71,12 +75,35 @@ class DeliveryManSectionController {
                 .json({ error: 'Requested Delivery does not exist.' });
         }
 
-        delivery.update({
+        const signature = await File.findByPk(signature_id);
+        if (!signature) {
+            return res.status(400).json({ error: 'Invalid signature id.' });
+        }
+
+        if (start_date) {
+            const deliveriesOfDay = await Delivery.findAndCountAll({
+                where: {
+                    deliveryman_id: deliverymanId,
+                    start_date: {
+                        [Op.between]: [startOfToday(), endOfToday()],
+                    },
+                },
+            });
+
+            if (deliveriesOfDay.count >= 5) {
+                return res.status(401).json({
+                    error: 'You can not deliver more than 5 deliveries a day ',
+                });
+            }
+        }
+
+        await delivery.update({
             start_date,
             end_date,
+            signature_id,
         });
 
-        return res.json();
+        return res.json({ delivery });
     }
 }
 

@@ -27,6 +27,7 @@ routes.put(
     DeliveryManSectionController.update
 );
 
+routes.get('/files', FileController.index);
 routes.post('/files', upload.single('signature'), FileController.store);
 
 routes.use(authMiddleware);
