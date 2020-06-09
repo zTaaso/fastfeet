@@ -47,6 +47,37 @@ class DeliveryManSectionController {
 
         return res.json(parsedDeliveries);
     }
+
+    async update(req, res) {
+        const { start_date, end_date } = req.body;
+        const { deliverymanId, deliveryId } = req.params;
+
+        const deliveryman = await DeliveryMan.findByPk(deliverymanId);
+        if (!deliveryman) {
+            return res
+                .status(400)
+                .json({ error: 'Requested Deliveryman does not exist.' });
+        }
+
+        const delivery = await Delivery.findOne({
+            where: {
+                id: deliveryId,
+                deliveryman_id: deliverymanId,
+            },
+        });
+        if (!delivery) {
+            return res
+                .status(400)
+                .json({ error: 'Requested Delivery does not exist.' });
+        }
+
+        delivery.update({
+            start_date,
+            end_date,
+        });
+
+        return res.json();
+    }
 }
 
 export default new DeliveryManSectionController();
