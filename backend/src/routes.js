@@ -15,6 +15,7 @@ import DeliveryManController from './app/controllers/DeliveryManController';
 import DeliveryController from './app/controllers/DeliveryController';
 import DeliveryManSectionController from './app/controllers/DeliveryManSectionController';
 import FileController from './app/controllers/FileController';
+import ProblemController from './app/controllers/ProblemController';
 
 const routes = Router();
 const upload = multer(multerConfig);
@@ -29,6 +30,10 @@ routes.put(
 
 routes.get('/files', FileController.index);
 routes.post('/files', upload.single('signature'), FileController.store);
+
+routes.post('/delivery/:id/problems', ProblemController.store);
+routes.get('/delivery/:id/problems', ProblemController.show);
+routes.get('/problems', ProblemController.index);
 
 routes.use(authMiddleware);
 

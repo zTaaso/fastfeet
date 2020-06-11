@@ -62,7 +62,15 @@ class DeliveryController {
     async delete(req, res) {
         const { id } = req.params;
 
-        const delivery = await Delivery.findByPk(id);
+        const delivery = await Delivery.findByPk(id, {
+            include: [
+                {
+                    model: DeliveryMan,
+                    attributes: ['email', 'name'],
+                    as: 'deliveryman',
+                },
+            ],
+        });
         if (!delivery) {
             return res
                 .status(400)
@@ -71,6 +79,13 @@ class DeliveryController {
 
         delivery.canceled_at = new Date();
         await delivery.save();
+
+        transporter.sendMail({
+            to: delivery.deliveryman.email,
+            subject: 'Nova encomenda cancelada',
+            text: `Olá ${delivery.deliveryman.name}! Uma entrega atribuída a você foi cancelada.`,
+            html: `<p> A entrega do produto <b>"${delivery.product}"</b> foi cancelada e não está mais disponível para a retirada. </p>`,
+        });
 
         return res.json(delivery);
     }
