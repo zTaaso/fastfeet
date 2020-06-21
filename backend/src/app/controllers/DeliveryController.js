@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
@@ -5,7 +6,20 @@ import DeliveryMan from '../models/DeliveryMan';
 import transporter from '../../config/mail';
 
 class DeliveryController {
-    async index(_, res) {
+    async index(req, res) {
+        const { q: query } = req.query;
+
+        if (query) {
+            const deliveries = await Delivery.findAll({
+                where: {
+                    product: {
+                        [Op.substring]: query,
+                    },
+                },
+            });
+            return res.json(deliveries);
+        }
+
         const deliveries = await Delivery.findAll();
 
         return res.json(deliveries);
