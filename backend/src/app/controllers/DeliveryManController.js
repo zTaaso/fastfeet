@@ -1,7 +1,21 @@
+import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 
 class DeliveryManController {
-    async index(_, res) {
+    async index(req, res) {
+        const { q: query } = req.query;
+
+        if (query) {
+            const deliveryMen = await DeliveryMan.findAll({
+                where: {
+                    name: {
+                        [Op.iLike]: query,
+                    },
+                },
+            });
+            return res.json(deliveryMen);
+        }
+
         const deliveryMen = await DeliveryMan.findAll();
         return res.json(deliveryMen);
     }
@@ -45,6 +59,17 @@ class DeliveryManController {
         }
 
         deliveryman.destroy();
+
+        return res.json(deliveryman);
+    }
+
+    async show(req, res) {
+        const { id } = req.params;
+
+        const deliveryman = await DeliveryMan.findByPk(id);
+        if (!deliveryman) {
+            return res.status(401).json({ error: 'Delivery man not found.' });
+        }
 
         return res.json(deliveryman);
     }
