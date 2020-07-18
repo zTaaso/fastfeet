@@ -29,7 +29,7 @@ routes.put(
 );
 
 routes.get('/files', FileController.index);
-routes.post('/files', upload.single('signature'), FileController.store);
+routes.post('/files', upload.single('file'), FileController.store);
 
 routes.post('/delivery/:id/problems', ProblemController.store);
 routes.get('/delivery/:id/problems', ProblemController.show);

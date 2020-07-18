@@ -1,5 +1,6 @@
 import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
+import FileModel from '../models/File';
 
 class DeliveryManController {
     async index(req, res) {
@@ -33,18 +34,19 @@ class DeliveryManController {
 
     async update(req, res) {
         const { id } = req.params;
-        const { name, email } = req.body;
+        const { avatar_id } = req.body;
 
         const deliveryman = await DeliveryMan.findByPk(id);
-
         if (!deliveryman) {
             return res.status(400).json({ error: 'Invalid id' });
         }
 
-        await deliveryman.update({
-            name,
-            email,
-        });
+        const avatar = await FileModel.findByPk(avatar_id);
+        if (!avatar) {
+            return res.status(400).json({ error: 'Invalid avatar id' });
+        }
+
+        await deliveryman.update(req.body);
 
         return res.json(deliveryman);
     }
