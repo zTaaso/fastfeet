@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
-import Route from './Routes';
+import Route from './Router';
 
 import SignIn from '../pages/SignIn';
 import Deliveries from '../pages/Deliveries';
