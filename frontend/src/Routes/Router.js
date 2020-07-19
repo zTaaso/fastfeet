@@ -6,7 +6,7 @@ import AuthLayout from '../pages/_layouts/auth';
 import DefaultLayout from '../pages/_layouts/default';
 
 function RouteWrapper({ component: Component, isPublic, ...rest }) {
-  const signed = false;
+  const signed = true;
 
   if (!signed && !isPublic) {
     return <Redirect to="/" />;
