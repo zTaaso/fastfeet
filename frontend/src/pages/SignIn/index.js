@@ -2,6 +2,8 @@ import React from 'react';
 
 import logo from '../../assets/logo.png';
 
+import Input from '../../components/Input';
+
 import { LogoContent } from './styles';
 
 function SignIn() {
@@ -19,15 +21,21 @@ function SignIn() {
       </header>
 
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">
-          Seu e-mail
-          <input type="email" id="email" placeholder="example@email.com" />
-        </label>
+        <Input
+          type="email"
+          id="email"
+          placeholder="example@email.com"
+          typeName="label"
+          label="Seu email"
+        />
 
-        <label htmlFor="password">
-          Sua senha
-          <input type="password" id="password" placeholder="*********" />
-        </label>
+        <Input
+          type="password"
+          id="password"
+          placeholder="**********"
+          typeName="label"
+          label="Sua senha"
+        />
 
         <button type="submit">Entrar no sistema</button>
       </form>
