@@ -5,6 +5,8 @@ import Route from './Router';
 import SignIn from '../pages/SignIn';
 import Deliveries from '../pages/Deliveries';
 import DeliveryMen from '../pages/DeliveryMen';
+import Recipients from '../pages/Recipients';
+import Problems from '../pages/Problems';
 
 function Routes() {
   return (
@@ -12,7 +14,9 @@ function Routes() {
       <Route exact path="/" component={SignIn} isPublic />
 
       <Route path="/deliveries" component={Deliveries} />
-      <Route path="/deliverymen" component={DeliveryMen} />
+      <Route path="/deliveryman" component={DeliveryMen} />
+      <Route path="/recipients" component={Recipients} />
+      <Route path="/problems" component={Problems} />
 
       <Route path="/" component={() => <h1>Página não encontrada</h1>} />
     </Switch>
