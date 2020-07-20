@@ -3,10 +3,13 @@ import Proptypes from 'prop-types';
 
 import { Table as TableStyled } from './styles';
 
-function Table({ headItems = [], bodyRows = [], ...props }) {
+import StatusLabel from './components/StatusLabel';
+import ActionsBtn from '../ActionsBtn';
+
+function Table({ headItems = [], bodyRows = [], dialog, ...props }) {
   return (
-    <TableStyled {...props}>
-      <table>
+    <TableStyled>
+      <table {...props}>
         <thead>
           <tr>
             {headItems.map((i) => (
@@ -14,12 +17,29 @@ function Table({ headItems = [], bodyRows = [], ...props }) {
             ))}
           </tr>
         </thead>
+
         <tbody>
           {bodyRows.map((row) => (
             <tr>
-              {Object.values(row).map((item) => (
-                <td>{item}</td>
-              ))}
+              <td>{row.id}</td>
+              <td>{row.recipient}</td>
+              <td>
+                <img
+                  src={`https://ui-avatars.com/api/?name=${row.deliveryman}&color=${row.avatar.color}`}
+                  alt=""
+                />
+                <label>{row.deliveryman}</label>
+              </td>
+              <td>{row.city}</td>
+              <td>{row.state}</td>
+              <td>
+                <StatusLabel category={row.status.category}>
+                  {row.status.label}
+                </StatusLabel>
+              </td>
+              <td>
+                <ActionsBtn dialog={dialog} />
+              </td>
             </tr>
           ))}
         </tbody>
