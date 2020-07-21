@@ -1,4 +1,4 @@
-import { rgbToColorString } from 'polished';
+import { rgbToColorString, darken } from 'polished';
 
 const generateRandomColor = () => {
   const randomRGB = {
@@ -7,7 +7,7 @@ const generateRandomColor = () => {
     blue: Math.round(Math.random() * 255),
   };
 
-  const randomColor = rgbToColorString(randomRGB).slice(1);
+  const randomColor = darken(0.1, rgbToColorString(randomRGB)).slice(1);
 
   return randomColor;
 };
