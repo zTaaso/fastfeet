@@ -10,7 +10,7 @@ function Input({ typeName = '', label = '', onSearch, ...props }) {
 
   if (typeName === 'label') {
     return (
-      <Label htmlFor={props.id}>
+      <Label>
         {label}
         <InputStyled {...props} />
       </Label>
@@ -51,7 +51,11 @@ export default Input;
 
 Input.propTypes = {
   typeName: Proptypes.string.isRequired,
-  label: Proptypes.string.isRequired,
-  onSearch: Proptypes.func.isRequired,
-  id: Proptypes.string.isRequired,
+  label: Proptypes.string,
+  onSearch: Proptypes.func,
+};
+
+Input.defaultProps = {
+  label: '',
+  onSearch: () => {},
 };
