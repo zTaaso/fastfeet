@@ -95,7 +95,8 @@ function Deliveries() {
       <Table
         headItems={tableContent.headItems}
         bodyRows={tableContent.rows}
-        dialog={DialogContent}
+        dialog={{ Component: DialogContent, title: 'Informações da encomenda' }}
+        category="deliveries"
       />
     </>
   );
