@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { BsThreeDots, BsFillTrashFill } from 'react-icons/bs';
 import { AiFillEye } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
@@ -7,7 +7,7 @@ import { ActionButton, Options, Button } from './styles';
 
 import Dialog from '../Dialog';
 
-function ActionsBtn({ data, dialog: DialogContent }) {
+function ActionsBtn({ data, dialog }) {
   const [isToggled, setIsToggled] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -37,10 +37,10 @@ function ActionsBtn({ data, dialog: DialogContent }) {
 
       <Dialog
         open={isDialogOpen}
-        title="Informações da encomenda"
+        title={dialog.title}
         handleClose={() => setIsDialogOpen(false)}
       >
-        <DialogContent />
+        <dialog.Component />
       </Dialog>
 
       <Options
