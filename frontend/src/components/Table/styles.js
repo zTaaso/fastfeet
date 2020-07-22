@@ -45,8 +45,12 @@ export const Table = styled.div`
         padding: 5px 20px 10px;
         color: #666666;
         font-size: 16px;
-        height: 20px;
+        max-width: 900px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         text-align: left;
+        word-wrap: break-word;
         vertical-align: baseline;
 
         label {
@@ -64,7 +68,8 @@ export const Table = styled.div`
       }
 
       td:last-child {
-        text-align: center;
+        padding: 10px 20px 10px;
+        overflow: visible;
       }
     }
   }
