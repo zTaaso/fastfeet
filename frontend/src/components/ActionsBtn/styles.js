@@ -3,6 +3,9 @@ import { darken } from 'polished';
 
 export const ActionButton = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   svg {
     cursor: pointer;
@@ -18,10 +21,10 @@ export const Options = styled.ul`
   text-align: center;
   border-radius: 0px;
   position: absolute;
-  z-index: 2;
+  z-index: 10;
   top: 100%;
-  left: 90%;
-  margin-left: -80px;
+  /* left: 0%; */
+  /* margin-left: -10%; */
 
   &::after {
     content: '';

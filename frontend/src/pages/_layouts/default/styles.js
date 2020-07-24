@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Wrapper = styled.div`
   height: 100%;
@@ -12,7 +13,7 @@ export const Wrapper = styled.div`
 export const Content = styled.div`
   height: 100%;
   width: 100%;
-  background: #f5f5f5;
+  background: ${darken(0.03, '#f5f5f5')};
 
   padding: 40px 70px;
 
@@ -20,9 +21,19 @@ export const Content = styled.div`
   flex-direction: column;
 
   header {
-    max-width: 90%;
+    /* max-width: 10%; */
+    display: flex;
+    flex-direction: column;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+
+      padding: 5px 20px;
+    }
 
     h1 {
+      display: block;
       margin-bottom: 10px;
     }
   }
