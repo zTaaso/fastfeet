@@ -1,13 +1,17 @@
 import React from 'react';
 
+import { useHistory } from 'react-router-dom';
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
 import DialogContent from './DialogContent';
 
 import generateRandomColor from '../../utils/generateRandomColor';
+import goToRegister from '../../utils/goToRegister';
 
 function DeliveryMen() {
+  const history = useHistory();
+
   const wait = (ms) =>
     new Promise((resolve) => {
       setTimeout(() => {
@@ -69,7 +73,7 @@ function DeliveryMen() {
             onSearch={getDeliveryman}
           />
 
-          <RegisterButton />
+          <RegisterButton onClick={() => goToRegister(history)} />
         </div>
       </header>
 

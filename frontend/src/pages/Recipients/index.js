@@ -1,11 +1,16 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
 import DialogContent from './DialogContent';
 
+import goToRegister from '../../utils/goToRegister';
+
 function Recipients() {
+  const history = useHistory();
+
   const wait = (ms) =>
     new Promise((resolve) => {
       setTimeout(() => {
@@ -56,7 +61,7 @@ function Recipients() {
             onSearch={getRecipients}
           />
 
-          <RegisterButton />
+          <RegisterButton onClick={() => goToRegister(history)} />
         </div>
       </header>
 
