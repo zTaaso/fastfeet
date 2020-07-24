@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // import { Container } from './styles';
 
+import { useHistory } from 'react-router-dom';
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
 import DialogContent from './DialogContent';
 
 import generateRandomColor from '../../utils/generateRandomColor';
+import goToRegister from '../../utils/goToRegister';
+
+import api from '../../services/api';
 
 function Deliveries() {
+  const history = useHistory();
+
+  const [deliveries, setDeliveries] = useState([]);
+
   const wait = (ms) =>
     new Promise((resolve) => {
       setTimeout(() => {
@@ -20,6 +28,14 @@ function Deliveries() {
   async function getDelivery() {
     await wait(2000);
   }
+
+  useEffect(() => {
+    async function getDeliveries() {
+      const response = await api.get('/delivery');
+      console.log(response.data);
+    }
+    getDeliveries();
+  }, []);
 
   const tableContent = {
     headItems: [
@@ -88,7 +104,7 @@ function Deliveries() {
             onSearch={getDelivery}
           />
 
-          <RegisterButton />
+          <RegisterButton onClick={() => goToRegister(history)} />
         </div>
       </header>
 
