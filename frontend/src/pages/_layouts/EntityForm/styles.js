@@ -57,4 +57,7 @@ export const Content = styled.div`
   background: #fff;
   width: 60%;
   margin-top: 20px;
+  border-radius: 7px;
+
+  padding: 30px;
 `;
