@@ -4,6 +4,7 @@ import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
 
 import transporter from '../../config/mail';
+import File from '../models/File';
 
 class DeliveryController {
     async index(req, res) {
@@ -20,7 +21,28 @@ class DeliveryController {
             return res.json(deliveries);
         }
 
-        const deliveries = await Delivery.findAll();
+        const deliveries = await Delivery.findAll({
+            include: [
+                {
+                    model: Recipient,
+                    as: 'recipient',
+                    attributes: ['id', 'name', 'city', 'state'],
+                },
+                {
+                    model: DeliveryMan,
+                    as: 'deliveryman',
+                    attributes: ['id', 'name'],
+                    include: [
+                        {
+                            model: File,
+                            as: 'avatar',
+                            attributes: ['id', 'url', 'path'],
+                        },
+                    ],
+                },
+            ],
+            attributes: ['id'],
+        });
 
         return res.json(deliveries);
     }
