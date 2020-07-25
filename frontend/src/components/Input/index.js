@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import Proptypes from 'prop-types';
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from 'react-icons/ai';
 
-import { Input as InputStyled, Label, Form } from './styles';
+import { Input as InputStyled, Label, Form, SelectStyled } from './styles';
 
-function Input({ typeName = '', label = '', onSearch, ...props }) {
+function Input({ typeName = '', label = '', onSearch, labelWidth, ...props }) {
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
 
   if (typeName === 'label') {
     return (
-      <Label>
+      <Label labelWidth={labelWidth}>
         {label}
         <InputStyled {...props} />
       </Label>
@@ -44,6 +44,15 @@ function Input({ typeName = '', label = '', onSearch, ...props }) {
     );
   }
 
+  if (typeName === 'labeled-select') {
+    return (
+      <Label>
+        {label}
+        <SelectStyled {...props} />
+      </Label>
+    );
+  }
+
   return <input {...props} />;
 }
 
@@ -53,9 +62,11 @@ Input.propTypes = {
   typeName: Proptypes.string.isRequired,
   label: Proptypes.string,
   onSearch: Proptypes.func,
+  labelWidth: Proptypes.number,
 };
 
 Input.defaultProps = {
   label: '',
   onSearch: () => {},
+  labelWidth: 100,
 };
