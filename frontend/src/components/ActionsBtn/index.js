@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { BsThreeDots, BsFillTrashFill } from 'react-icons/bs';
 import { AiFillEye } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
@@ -8,14 +9,17 @@ import { ActionButton, Options, Button } from './styles';
 import Dialog from '../Dialog';
 
 function ActionsBtn({ data, dialog }) {
+  const history = useHistory();
+
   const [isToggled, setIsToggled] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // const divref = useRef();
-  const divsla = <div>seu cú</div>;
-
   function handleViewClick() {
     setIsDialogOpen(true);
+  }
+
+  function handleEditClick() {
+    history.push(`${history.location.pathname}/1/form`);
   }
 
   return (
@@ -59,7 +63,7 @@ function ActionsBtn({ data, dialog }) {
           </Button>
         </li>
         <li>
-          <Button>
+          <Button onClick={handleEditClick}>
             <MdEdit size={15} color="#4D85EE" />
             <span>Editar</span>
           </Button>
