@@ -1,7 +1,10 @@
 import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import logo from '../../assets/logo.png';
+
+import { signOut } from '../../store/modules/auth/actions';
 
 import {
   Content,
@@ -14,11 +17,13 @@ import {
 
 function Header() {
   const history = useHistory();
+  const dispatch = useDispatch();
+
   const { pathname } = history.location;
 
   const routes = [
     { name: 'deliveries', label: 'Encomendas' },
-    { name: 'deliveryman', label: 'Entregadores' },
+    { name: 'deliverymen', label: 'Entregadores' },
     { name: 'recipients', label: 'Destinatários' },
     { name: 'problems', label: 'Problemas' },
   ];
@@ -26,6 +31,10 @@ function Header() {
     ...r,
     isSelected: pathname.includes(r.name),
   }));
+
+  function handleSignOut() {
+    dispatch(signOut());
+  }
 
   return (
     <Content>
@@ -51,7 +60,9 @@ function Header() {
       <ProfileSection>
         <LogoutContent>
           <p>Admin FastFeet</p>
-          <a href="#">Sair do sistema</a>
+          <button type="button" onClick={handleSignOut}>
+            Sair do sistema
+          </button>
         </LogoutContent>
       </ProfileSection>
     </Content>
