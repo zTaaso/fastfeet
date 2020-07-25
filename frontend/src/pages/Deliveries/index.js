@@ -10,6 +10,7 @@ import DialogContent from './DialogContent';
 
 import generateRandomColor from '../../utils/generateRandomColor';
 import goToRegister from '../../utils/goToRegister';
+import getAvatarUrl from '../../utils/getAvatarUrl';
 
 import api from '../../services/api';
 
@@ -17,27 +18,7 @@ function Deliveries() {
   const history = useHistory();
 
   const [deliveries, setDeliveries] = useState([]);
-
-  const wait = (ms) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('pesquisa completa');
-      }, ms);
-    });
-
-  async function getDelivery() {
-    await wait(2000);
-  }
-
-  useEffect(() => {
-    async function getDeliveries() {
-      const response = await api.get('/delivery');
-      console.log(response.data);
-    }
-    getDeliveries();
-  }, []);
-
-  const tableContent = {
+  const [tableContent, setTableContent] = useState({
     headItems: [
       'ID',
       'Destinatário',
@@ -47,49 +28,50 @@ function Deliveries() {
       'Status',
       'Ações',
     ],
-    rows: [
-      {
-        id: 1,
-        recipient: 'Thiago Afonso',
-        deliveryman: 'João Doe',
-        city: 'Ibirité',
-        state: 'Minas Gerais',
+    rows: [],
+  });
+
+  const wait = (ms) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve('pesquisa completa');
+      }, ms);
+    });
+
+  async function searchDelivery() {
+    await wait(2000);
+  }
+
+  useEffect(() => {
+    async function getDeliveries() {
+      const response = await api.get('/delivery');
+
+      setDeliveries(response.data);
+    }
+    getDeliveries();
+  }, []);
+
+  useEffect(() => {
+    const rows = deliveries.map((delivery) => {
+      const deliveryman_avatar = delivery.deliveryman.avatar.url;
+      const deliveryman_name = delivery.deliveryman.name;
+
+      return {
+        id: delivery.id,
+        recipient: delivery.recipient.name,
+        deliveryman: {
+          name: deliveryman_name,
+          avatar_url:
+            deliveryman_avatar || getAvatarUrl(delivery, generateRandomColor()),
+        },
+        city: delivery.recipient.city,
+        state: delivery.recipient.state,
         status: { category: 'delivered', label: 'Entregue' },
-        actions: '...',
-        avatar: { color: generateRandomColor() },
-      },
-      {
-        id: 2,
-        recipient: 'Thiago Afonso',
-        deliveryman: 'Corno Manso',
-        city: 'Ibirité',
-        state: 'Minas Gerais',
-        status: { category: 'pending', label: 'Pendente' },
-        actions: '...',
-        avatar: { color: generateRandomColor() },
-      },
-      {
-        id: 1,
-        recipient: 'Thiago Afonso',
-        deliveryman: 'Lívia Santos',
-        city: 'Ibirité',
-        state: 'Minas Gerais',
-        status: { category: 'retired', label: 'Retirada' },
-        actions: '...',
-        avatar: { color: generateRandomColor() },
-      },
-      {
-        id: 1,
-        recipient: 'Thiago Afonso',
-        deliveryman: 'João Doe',
-        city: 'Ibirité',
-        state: 'Minas Gerais',
-        status: { category: 'canceled', label: 'Cancelada' },
-        actions: '...',
-        avatar: { color: generateRandomColor() },
-      },
-    ],
-  };
+      };
+    });
+
+    setTableContent((value) => ({ ...value, rows }));
+  }, [deliveries]);
 
   return (
     <>
@@ -101,7 +83,7 @@ function Deliveries() {
             type="text"
             placeholder="Buscar por encomendas"
             typeName="search"
-            onSearch={getDelivery}
+            onSearch={searchDelivery}
           />
 
           <RegisterButton onClick={() => goToRegister(history)} />
