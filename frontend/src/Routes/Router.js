@@ -1,12 +1,13 @@
 import React from 'react';
 import Proptypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import AuthLayout from '../pages/_layouts/auth';
 import DefaultLayout from '../pages/_layouts/default';
 
 function RouteWrapper({ component: Component, isPublic, ...rest }) {
-  const signed = true;
+  const signed = useSelector((state) => state.auth.signed);
 
   if (!signed && !isPublic) {
     return <Redirect to="/" />;
