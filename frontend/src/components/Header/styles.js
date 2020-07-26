@@ -73,7 +73,9 @@ export const LogoutContent = styled.div`
     color: #666666;
   }
 
-  a {
+  button {
     color: #de3b3b;
+    border: 0;
+    background: none;
   }
 `;
