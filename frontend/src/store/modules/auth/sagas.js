@@ -1,5 +1,7 @@
 import { all, takeLatest, call, put } from 'redux-saga/effects';
 
+import history from '../../../services/history';
+
 import api from '../../../services/api';
 
 import { signInFailure, signInSuccess } from './actions';
@@ -18,7 +20,10 @@ function* signIn({ payload }) {
   }
 }
 
-function* signOut() {}
+function signOut() {
+  api.defaults.headers.authorization = null;
+  history.push('/');
+}
 
 export default all([
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
