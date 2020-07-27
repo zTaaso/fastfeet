@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Table from '../../components/Table';
@@ -8,8 +8,15 @@ import DialogContent from './DialogContent';
 
 import goToRegister from '../../utils/goToRegister';
 
+import api from '../../services/api';
+
 function Recipients() {
   const history = useHistory();
+
+  const [recipients, setRecipients] = useState([]);
+  const [tableContent, setTableContent] = useState({
+    headItems: ['ID', 'Nome', 'Endereço', 'Ações'],
+  });
 
   const wait = (ms) =>
     new Promise((resolve) => {
@@ -18,35 +25,33 @@ function Recipients() {
       }, ms);
     });
 
-  async function getRecipients() {
+  async function getRecipient() {
     await wait(2000);
   }
 
-  const tableContent = {
-    headItems: ['ID', 'Nome', 'Endereço', 'Ações'],
-    rows: [
-      {
-        id: 1,
-        name: 'Thiago Afonso',
-        adress: 'Rua jusciliana narciso campos',
-      },
-      {
-        id: 1,
-        name: 'Thiago Afonso',
-        adress: 'Rua jusciliana narciso campos',
-      },
-      {
-        id: 1,
-        name: 'Thiago Afonso',
-        adress: 'Rua jusciliana narciso campos',
-      },
-      {
-        id: 1,
-        name: 'Thiago Afonso',
-        adress: 'Rua jusciliana narciso campos',
-      },
-    ],
-  };
+  useEffect(() => {
+    async function getRecipients() {
+      const response = await api.get('/recipients');
+      setRecipients(response.data);
+    }
+    getRecipients();
+  }, []);
+
+  useEffect(() => {
+    const rows = recipients.map((recipient) => {
+      const formatedId = `#${recipient.id.toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+      })}`;
+
+      return {
+        id: formatedId,
+        name: recipient.name,
+        adress: `${recipient.street}, ${recipient.number}, ${recipient.city} - ${recipient.state} `,
+      };
+    });
+
+    setTableContent((prev) => ({ ...prev, rows }));
+  }, [recipients]);
 
   return (
     <>
@@ -58,7 +63,7 @@ function Recipients() {
             type="text"
             placeholder="Buscar por destinatários"
             typeName="search"
-            onSearch={getRecipients}
+            onSearch={getRecipient}
           />
 
           <RegisterButton onClick={() => goToRegister(history)} />
