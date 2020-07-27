@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import Table from '../../components/Table';
@@ -7,10 +7,19 @@ import RegisterButton from '../../components/RegisterButton';
 import DialogContent from './DialogContent';
 
 import generateRandomColor from '../../utils/generateRandomColor';
+import getAvatarUrl from '../../utils/getAvatarUrl';
+
 import goToRegister from '../../utils/goToRegister';
+
+import api from '../../services/api';
 
 function DeliveryMen() {
   const history = useHistory();
+  const [deliverymen, setDeliverymen] = useState([]);
+  const [tableContent, setTableContent] = useState({
+    headItems: ['ID', 'Foto', 'Nome', 'Email', 'Ações'],
+    rows: [],
+  });
 
   const wait = (ms) =>
     new Promise((resolve) => {
@@ -23,42 +32,32 @@ function DeliveryMen() {
     await wait(2000);
   }
 
-  const tableContent = {
-    headItems: ['ID', 'Foto', 'Nome', 'Email', 'Ações'],
-    rows: [
-      {
-        id: 1,
-        img:
-          'https://vignette.wikia.nocookie.net/naruto/images/b/b1/Naruto_Uzumaki_%28Infobox_Parte_II_B%29.png/revision/latest?cb=20160903113328&path-prefix=pt-br',
-        name: 'Thiago Afonso',
-        email: 'ztaaso123@gmail.com',
-        avatar: { color: generateRandomColor() },
-      },
-      {
-        id: 1,
-        img: '',
-        name: 'Thiago Santos',
-        email: 'ztaaso123@gmail.com',
-        avatar: { color: generateRandomColor() },
-      },
-      {
-        id: 1,
-        img:
-          'https://vignette.wikia.nocookie.net/naruto/images/b/b1/Naruto_Uzumaki_%28Infobox_Parte_II_B%29.png/revision/latest?cb=20160903113328&path-prefix=pt-br',
-        name: 'Naruto Uzumaki',
-        email: 'ztaaso123@gmail.com',
-        avatar: { color: generateRandomColor() },
-      },
-      {
-        id: 1,
-        img:
-          'https://vignette.wikia.nocookie.net/naruto/images/b/b1/Naruto_Uzumaki_%28Infobox_Parte_II_B%29.png/revision/latest?cb=20160903113328&path-prefix=pt-br',
-        name: 'Thiago Afonso',
-        email: 'ztaaso123@gmail.com',
-        avatar: { color: generateRandomColor() },
-      },
-    ],
-  };
+  useEffect(() => {
+    async function getDeliverymen() {
+      const response = await api.get('/deliveryman');
+      setDeliverymen(response.data);
+    }
+    getDeliverymen();
+  }, []);
+
+  useEffect(() => {
+    const rows = deliverymen.map((deliveryman) => {
+      const formatedId = `#${deliveryman.id.toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+      })}`;
+      const { avatar } = deliveryman;
+
+      return {
+        id: formatedId,
+        name: deliveryman.name,
+        email: deliveryman.email,
+        avatar_url: avatar
+          ? avatar.url
+          : getAvatarUrl(deliveryman.name, generateRandomColor()),
+      };
+    });
+    setTableContent((prev) => ({ ...prev, rows }));
+  }, [deliverymen]);
 
   return (
     <>
