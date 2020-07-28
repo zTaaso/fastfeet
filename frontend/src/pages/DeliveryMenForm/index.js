@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+
+import Proptypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
 import { InputStyled } from './styles';
@@ -8,24 +11,26 @@ import EntityForm from '../_layouts/EntityForm';
 import Dropzone from '../../components/Dropzone';
 import api from '../../services/api';
 
-function DeliveryMenForm() {
+function DeliveryMenForm({ match }) {
+  const deliverymanId = match.params.id;
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [imgURL, setImgURL] = useState('');
 
   const [imgFile, setImgFile] = useState(
     new File([{ type: 'img' }], 'null.png')
   );
 
-  const img = '';
-
   const history = useHistory();
-  const titleWord = history.location.pathname.includes('register')
+  const status = history.location.pathname.includes('register')
     ? 'Cadastro'
     : 'Edição';
 
   async function handleSave() {
     try {
       let avatar_id = null;
+
       if (imgFile.size > 20) {
         const fileData = new FormData();
         fileData.append('file', imgFile);
@@ -33,19 +38,44 @@ function DeliveryMenForm() {
         avatar_id = response.data.id;
       }
 
-      await api.post('/deliveryman', { name, email, avatar_id });
+      if (status === 'Cadastro') {
+        await api.post('/deliveryman', { name, email, avatar_id });
+      } else {
+        await api.put(`/deliveryman/${deliverymanId}`, {
+          name,
+          email,
+          avatar_id,
+        });
+      }
 
-      alert('Entregador criado com sucesso!');
+      toast.success('Entregador salvo com sucesso!');
       history.goBack();
     } catch (err) {
-      alert('Algo deu errado!');
+      toast.error('Algo deu errado!');
     }
   }
 
+  useEffect(() => {
+    async function getDeliveryman(id) {
+      const response = await api.get(`/deliveryman/${id}`);
+      const deliveryman = response.data;
+
+      const avatarURL = deliveryman.avatar_id ? deliveryman.avatar.url : null;
+
+      setImgURL(avatarURL);
+      setName(deliveryman.name);
+      setEmail(deliveryman.email);
+    }
+
+    if (status === 'Edição') {
+      getDeliveryman(deliverymanId);
+    }
+  }, []);
+
   return (
-    <EntityForm title={`${titleWord} de entregadores`} onSave={handleSave}>
+    <EntityForm title={`${status} de entregadores`} onSave={handleSave}>
       <Dropzone
-        img={img}
+        img={imgURL}
         onFileChange={(file) => {
           setImgFile(file);
         }}
@@ -56,6 +86,7 @@ function DeliveryMenForm() {
         label="Nome"
         type="text"
         width={100}
+        value={name}
         onChange={(e) => setName(e.target.value)}
       />
       <InputStyled
@@ -63,6 +94,7 @@ function DeliveryMenForm() {
         label="Email"
         type="email"
         labelWidth={100}
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
     </EntityForm>
@@ -70,3 +102,15 @@ function DeliveryMenForm() {
 }
 
 export default DeliveryMenForm;
+
+DeliveryMenForm.propTypes = {
+  match: Proptypes.shape({
+    params: { id: Proptypes.number },
+  }),
+};
+
+DeliveryMenForm.defaultProps = {
+  match: {
+    params: { id: null },
+  },
+};
