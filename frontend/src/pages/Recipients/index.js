@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+
 import { useHistory } from 'react-router-dom';
 
 import Table from '../../components/Table';
@@ -29,11 +31,26 @@ function Recipients() {
     await wait(2000);
   }
 
-  useEffect(() => {
-    async function getRecipients() {
+  async function getRecipients() {
+    try {
       const response = await api.get('/recipients');
       setRecipients(response.data);
+    } catch (err) {
+      toast.error('Falha ao listar destinatários.');
     }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await api.delete(`/recipients/${id}`, { params: { destroy: 'true' } });
+      toast.success('Destinatário deletado com sucesso.');
+      getRecipients();
+    } catch (err) {
+      toast.error('Falha ao deletar destinatário.');
+    }
+  }
+
+  useEffect(() => {
     getRecipients();
   }, []);
 
@@ -44,7 +61,8 @@ function Recipients() {
       })}`;
 
       return {
-        id: formatedId,
+        id: recipient.id,
+        formatedId,
         name: recipient.name,
         adress: `${recipient.street}, ${recipient.number}, ${recipient.city} - ${recipient.state} `,
       };
@@ -75,6 +93,7 @@ function Recipients() {
         bodyRows={tableContent.rows}
         dialog={{ Component: DialogContent, title: 'Destinatário' }}
         category="recipients"
+        handleDelete={handleDelete}
       />
     </>
   );

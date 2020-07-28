@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
+import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
+
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
@@ -32,11 +33,26 @@ function DeliveryMen() {
     await wait(2000);
   }
 
-  useEffect(() => {
-    async function getDeliverymen() {
+  async function getDeliverymen() {
+    try {
       const response = await api.get('/deliveryman');
       setDeliverymen(response.data);
+    } catch (err) {
+      toast.error('Falha ao listar entregadores.');
     }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await api.delete(`/deliveryman/${id}`, { params: { destroy: 'true' } });
+      toast.success('Entregador deletado com sucesso.');
+      getDeliverymen();
+    } catch (err) {
+      toast.error('Falha ao deletar entregador.');
+    }
+  }
+
+  useEffect(() => {
     getDeliverymen();
   }, []);
 
@@ -48,7 +64,8 @@ function DeliveryMen() {
       const { avatar } = deliveryman;
 
       return {
-        id: formatedId,
+        id: deliveryman.id,
+        formatedId,
         name: deliveryman.name,
         email: deliveryman.email,
         avatar_url: avatar
@@ -81,6 +98,7 @@ function DeliveryMen() {
         bodyRows={tableContent.rows}
         dialog={{ Component: DialogContent, title: 'Entregador' }}
         category="deliverymen"
+        handleDelete={handleDelete}
       />
     </>
   );

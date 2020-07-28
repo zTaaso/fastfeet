@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import Table from '../../components/Table';
 import DialogContent from './DialogContent';
@@ -14,20 +15,28 @@ function Problems() {
 
   useEffect(() => {
     async function getProblems() {
-      const response = await api.get('/problems');
-      setProblems(response.data);
+      try {
+        const response = await api.get('/problems');
+        setProblems(response.data);
+      } catch (err) {
+        toast.error('Falha ao listar problemas.');
+      }
     }
     getProblems();
   }, []);
 
   useEffect(() => {
     const rows = problems.map((problem) => {
-      const formatedId = `#${problem.delivery_id.toLocaleString('en-US', {
-        minimumIntegerDigits: 2,
-      })}`;
+      const formatedDeliveryId = `#${problem.delivery_id.toLocaleString(
+        'en-US',
+        {
+          minimumIntegerDigits: 2,
+        }
+      )}`;
 
       return {
-        delivery_id: formatedId,
+        delivery_id: problem.delivery_id,
+        formatedDeliveryId,
         description: problem.description,
       };
     });

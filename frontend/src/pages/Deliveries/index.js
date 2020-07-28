@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
-// import { Container } from './styles';
-
+import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
+
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
@@ -42,12 +41,26 @@ function Deliveries() {
     await wait(2000);
   }
 
-  useEffect(() => {
-    async function getDeliveries() {
+  async function getDeliveries() {
+    try {
       const response = await api.get('/delivery');
-
       setDeliveries(response.data);
+    } catch (err) {
+      toast.error('Falha ao listar encomendas.');
     }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await api.delete(`/delivery/${id}`, { params: { destroy: 'true' } });
+      toast.success('Encomenda deletada com sucesso.');
+      getDeliveries();
+    } catch (err) {
+      toast.error('Falha ao deletar encomenda.');
+    }
+  }
+
+  useEffect(() => {
     getDeliveries();
   }, []);
 
@@ -60,8 +73,27 @@ function Deliveries() {
         minimumIntegerDigits: 2,
       })}`;
 
+      let label = '';
+      switch (delivery.status) {
+        case 'delivered':
+          label = 'entregue';
+          break;
+        case 'pending':
+          label = 'pendente';
+          break;
+        case 'retired':
+          label = 'retirada';
+          break;
+        case 'canceled':
+          label = 'cancelada';
+          break;
+        default:
+          label = '';
+      }
+
       return {
-        id: formatedId,
+        id: delivery.id,
+        formatedId,
         recipient: delivery.recipient.name,
         deliveryman: {
           name: deliveryman_name,
@@ -71,7 +103,7 @@ function Deliveries() {
         },
         city: delivery.recipient.city,
         state: delivery.recipient.state,
-        status: { category: 'delivered', label: 'Entregue' },
+        status: { category: delivery.status, label },
       };
     });
 
@@ -100,6 +132,7 @@ function Deliveries() {
         bodyRows={tableContent.rows}
         dialog={{ Component: DialogContent, title: 'Informações da encomenda' }}
         category="deliveries"
+        handleDelete={handleDelete}
       />
     </>
   );
