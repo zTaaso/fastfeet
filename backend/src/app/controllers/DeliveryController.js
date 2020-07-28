@@ -4,7 +4,7 @@ import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
 
 import transporter from '../../config/mail';
-import File from '../models/File';
+import FileModel from '../models/File';
 
 class DeliveryController {
     async index(req, res) {
@@ -34,7 +34,7 @@ class DeliveryController {
                     attributes: ['id', 'name'],
                     include: [
                         {
-                            model: File,
+                            model: FileModel,
                             as: 'avatar',
                             attributes: ['id', 'url', 'path'],
                         },
