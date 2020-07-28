@@ -56,13 +56,18 @@ function Deliveries() {
       const deliveryman_avatar = delivery.deliveryman.avatar.url;
       const deliveryman_name = delivery.deliveryman.name;
 
+      const formatedId = `#${delivery.id.toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+      })}`;
+
       return {
-        id: delivery.id,
+        id: formatedId,
         recipient: delivery.recipient.name,
         deliveryman: {
           name: deliveryman_name,
           avatar_url:
-            deliveryman_avatar || getAvatarUrl(delivery, generateRandomColor()),
+            deliveryman_avatar ||
+            getAvatarUrl(deliveryman_name, generateRandomColor()),
         },
         city: delivery.recipient.city,
         state: delivery.recipient.state,
