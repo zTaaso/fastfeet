@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { DialogContentStyled } from './styles';
 
-function DialogContent() {
+import api from '../../../services/api';
+
+function DialogContent({ id }) {
+  const [recipient, setRecipient] = useState({});
+
+  useEffect(() => {
+    async function getRecipient() {
+      const response = await api.get(`/recipients/${id}`);
+
+      setRecipient(response.data);
+    }
+    getRecipient();
+  }, []);
+
   return (
     <DialogContentStyled>
       <div>
         <div>
-          <h3>Naruto Uzumaki</h3>
+          <h3>{recipient.name}</h3>
         </div>
       </div>
 
@@ -16,25 +29,25 @@ function DialogContent() {
       <div>
         <h3>Informações</h3>
         <p>
-          <strong>ID:</strong> 27
+          <strong>ID:</strong> {recipient.id}
         </p>
         <p>
-          <strong>Rua:</strong> Jusciliana Narsciso Campos
+          <strong>Rua:</strong> {recipient.street}
         </p>
         <p>
-          <strong>Número:</strong> 940
+          <strong>Número:</strong> {recipient.number}
         </p>
         <p>
-          <strong>Complemento:</strong> Esquina
+          <strong>Complemento:</strong> {recipient.complement}
         </p>
         <p>
-          <strong>Cidade:</strong> Ibirité
+          <strong>Cidade:</strong> {recipient.city}
         </p>
         <p>
-          <strong>Estado:</strong> Minas Gerais
+          <strong>Estado:</strong> {recipient.state}
         </p>
         <p>
-          <strong>CEP:</strong> 12345678
+          <strong>CEP:</strong> {recipient.zip}
         </p>
       </div>
     </DialogContentStyled>
