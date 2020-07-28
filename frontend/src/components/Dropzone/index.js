@@ -4,7 +4,7 @@ import { BsImage } from 'react-icons/bs';
 
 import { Container, Content } from './styles';
 
-function Dropzone({ img }) {
+function Dropzone({ img, onFileChange }) {
   const [imgURL, setImgURL] = useState(img);
   const hasPhoto = !!imgURL;
 
@@ -13,6 +13,7 @@ function Dropzone({ img }) {
 
     const url = URL.createObjectURL(file);
     setImgURL(url);
+    onFileChange(file);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
