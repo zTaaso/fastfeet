@@ -13,21 +13,29 @@ class DeliveryManController {
                         [Op.iLike]: query,
                     },
                 },
+                include: [
+                    {
+                        model: FileModel,
+                        as: 'avatar',
+                        attributes: ['url', 'path'],
+                    },
+                ],
             });
             return res.json(deliveryMen);
         }
 
-        const deliveryMen = await DeliveryMan.findAll();
+        const deliveryMen = await DeliveryMan.findAll({
+            include: [
+                { model: FileModel, as: 'avatar', attributes: ['url', 'path'] },
+            ],
+        });
         return res.json(deliveryMen);
     }
 
     async store(req, res) {
-        const { name, email } = req.body;
+  
 
-        const deliveryMan = await DeliveryMan.create({
-            name,
-            email,
-        });
+        const deliveryMan = await DeliveryMan.create(req.body);
 
         return res.json(deliveryMan);
     }
