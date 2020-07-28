@@ -4,6 +4,7 @@ export const Table = styled.div`
   overflow-y: scroll;
   padding: 10px 20px;
   max-height: 400px;
+  height: 100%;
 
   scrollbar-color: #eee;
   /* Hide scrollbar for IE, Edge and Firefox */
