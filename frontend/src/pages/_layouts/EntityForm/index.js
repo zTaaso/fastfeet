@@ -5,7 +5,7 @@ import { MdDone } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 import { Container, Content } from './styles';
 
-function EntityForm({ title, children }) {
+function EntityForm({ title, children, onSave }) {
   const history = useHistory();
 
   function handleGoBack() {
@@ -22,7 +22,7 @@ function EntityForm({ title, children }) {
             <IoIosArrowBack size={20} color="#fff" />
             Voltar
           </button>
-          <button id="save" type="button">
+          <button id="save" type="submit" onClick={onSave}>
             <MdDone size={20} color="#fff" />
             Salvar
           </button>
