@@ -11,11 +11,8 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
           <td>{row.id}</td>
           <td>{row.recipient}</td>
           <td>
-            <img
-              src={`https://ui-avatars.com/api/?name=${row.deliveryman}&color=${row.avatar.color}`}
-              alt=""
-            />
-            <label>{row.deliveryman}</label>
+            <img src={row.deliveryman.avatar_url} alt={row.deliveryman.name} />
+            <label>{row.deliveryman.name}</label>
           </td>
           <td>{row.city}</td>
           <td>{row.state}</td>
@@ -37,14 +34,7 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
         <tr>
           <td>{row.id}</td>
           <td>
-            <img
-              src={
-                row.img
-                  ? row.img
-                  : `https://ui-avatars.com/api/?name=${row.name}&color=${row.avatar.color}`
-              }
-              alt=""
-            />
+            <img src={row.avatar_url} alt={row.name} />
           </td>
           <td>{row.name}</td>
           <td>{row.email}</td>
@@ -76,9 +66,9 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
     case 'problems': {
       classifiedRows = rows.map((row) => (
         <tr>
-          <td>{row.id}</td>
+          <td>{row.delivery_id}</td>
 
-          <td>{row.problem}</td>
+          <td>{row.description}</td>
 
           <td>
             <ActionsBtn.Component {...ActionsBtn.props} />
