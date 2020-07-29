@@ -76,7 +76,7 @@ class DeliveryManSectionController {
         }
 
         const signature = await File.findByPk(signature_id);
-        if (!signature) {
+        if (!signature && signature_id) {
             return res.status(400).json({ error: 'Invalid signature id.' });
         }
 
@@ -97,11 +97,7 @@ class DeliveryManSectionController {
             }
         }
 
-        await delivery.update({
-            start_date,
-            end_date,
-            signature_id,
-        });
+        await delivery.update(req.body);
 
         return res.json({ delivery });
     }
