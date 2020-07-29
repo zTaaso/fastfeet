@@ -7,8 +7,8 @@ class RecipientValidator {
             number: Yup.number().required(),
             street: Yup.string().required(),
             complement: Yup.string(),
-            state: Yup.string().required(),
-            city: Yup.string().required(),
+            state: Yup.string().required().min(2),
+            city: Yup.string().required().min(2),
             zip: Yup.string().required().min(8),
         });
 
