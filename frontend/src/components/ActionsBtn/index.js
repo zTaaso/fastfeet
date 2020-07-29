@@ -4,11 +4,11 @@ import { BsThreeDots, BsFillTrashFill } from 'react-icons/bs';
 import { AiFillEye } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
 
-import { ActionButton, Options, Button } from './styles';
-
 import Dialog from '../Dialog';
 
-function ActionsBtn({ data, dialog }) {
+import { ActionButton, Options, Button } from './styles';
+
+function ActionsBtn({ id, dialog, handleDelete }) {
   const history = useHistory();
 
   const [isToggled, setIsToggled] = useState(false);
@@ -19,7 +19,13 @@ function ActionsBtn({ data, dialog }) {
   }
 
   function handleEditClick() {
-    history.push(`${history.location.pathname}/1/form`);
+    history.push(`${history.location.pathname}/${id}/form`);
+  }
+
+  function handleDeleteClick() {
+    if (window.confirm('Deletar registro permanentemente?')) {
+      handleDelete(id);
+    }
   }
 
   return (
@@ -44,7 +50,7 @@ function ActionsBtn({ data, dialog }) {
         title={dialog.title}
         handleClose={() => setIsDialogOpen(false)}
       >
-        <dialog.Component />
+        <dialog.Component id={id} />
       </Dialog>
 
       <Options
@@ -69,7 +75,7 @@ function ActionsBtn({ data, dialog }) {
           </Button>
         </li>
         <li>
-          <Button>
+          <Button onClick={handleDeleteClick}>
             <BsFillTrashFill size={15} color="#DE3B3B" />
             <span>Excluir</span>
           </Button>
