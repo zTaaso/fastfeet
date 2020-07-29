@@ -61,7 +61,9 @@ class RecipientController {
     async show(req, res) {
         const { id } = req.params;
 
-        const recipient = await Recipient.findByPk(id);
+        const recipient = await Recipient.findByPk(id, {
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+        });
 
         if (!recipient) {
             return res.status(401).json({ error: 'Recipient not found.' });
