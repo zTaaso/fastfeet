@@ -7,10 +7,17 @@ import StatusLabel from './components/StatusLabel';
 import ClassifyRows from './components/ClassifiedRows';
 import ActionsBtn from '../ActionsBtn';
 
-function Table({ headItems = [], bodyRows = [], dialog, category, ...props }) {
+function Table({
+  headItems = [],
+  bodyRows = [],
+  dialog,
+  category,
+  handleDelete,
+  ...props
+}) {
   const components = {
     StatusLabel: { Component: StatusLabel },
-    ActionsBtn: { Component: ActionsBtn, props: { dialog } },
+    ActionsBtn: { Component: ActionsBtn, props: { dialog, handleDelete } },
   };
 
   return (
@@ -41,4 +48,10 @@ export default Table;
 Table.propTypes = {
   headItems: Proptypes.arrayOf(Proptypes.string).isRequired,
   bodyRows: Proptypes.arrayOf(Proptypes.object).isRequired,
+  dialog: Proptypes.shape({
+    Component: Proptypes.element,
+    title: Proptypes.string,
+  }).isRequired,
+  category: Proptypes.string.isRequired,
+  handleDelete: Proptypes.func.isRequired,
 };
