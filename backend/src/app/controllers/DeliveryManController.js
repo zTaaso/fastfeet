@@ -33,8 +33,6 @@ class DeliveryManController {
     }
 
     async store(req, res) {
-  
-
         const deliveryMan = await DeliveryMan.create(req.body);
 
         return res.json(deliveryMan);
@@ -50,7 +48,7 @@ class DeliveryManController {
         }
 
         const avatar = await FileModel.findByPk(avatar_id);
-        if (!avatar) {
+        if (avatar && !avatar) {
             return res.status(400).json({ error: 'Invalid avatar id' });
         }
 
@@ -76,7 +74,15 @@ class DeliveryManController {
     async show(req, res) {
         const { id } = req.params;
 
-        const deliveryman = await DeliveryMan.findByPk(id);
+        const deliveryman = await DeliveryMan.findByPk(id, {
+            include: [
+                {
+                    model: FileModel,
+                    as: 'avatar',
+                    attributes: ['url', 'path'],
+                },
+            ],
+        });
         if (!deliveryman) {
             return res.status(401).json({ error: 'Delivery man not found.' });
         }
