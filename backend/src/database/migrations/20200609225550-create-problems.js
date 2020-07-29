@@ -10,11 +10,11 @@ module.exports = {
             },
             delivery_id: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 unique: false,
                 references: { model: 'delivery', key: 'id' },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL',
+                onDelete: 'CASCADE',
             },
             description: {
                 type: Sequelize.STRING,
