@@ -29,7 +29,7 @@ export const Content = styled.div`
       display: flex;
       justify-content: space-between;
 
-      padding: 5px 20px;
+      padding: 5px;
     }
 
     h1 {
