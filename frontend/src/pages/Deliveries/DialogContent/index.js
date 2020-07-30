@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import Proptypes from 'prop-types';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { FaRegSadTear } from 'react-icons/fa';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+
+import Loading from '../../../components/Loading';
 
 import api from '../../../services/api';
 
@@ -40,7 +42,6 @@ function DialogContent({ id }) {
       setDelivery(response.data);
       setFormatedDates(formatingDates);
       setLoading(false);
-      console.log({ id, response: response.data });
     }
     getDelivery();
   }, []);
@@ -49,7 +50,7 @@ function DialogContent({ id }) {
     <DialogContentStyled>
       {loading ? (
         <div className="loading">
-          <AiOutlineLoading3Quarters color="#000" size={30} />
+          <Loading color="#000" size={30} />
         </div>
       ) : (
         <>
@@ -107,3 +108,7 @@ function DialogContent({ id }) {
 }
 
 export default DialogContent;
+
+DialogContent.propTypes = {
+  id: Proptypes.number.isRequired,
+};
