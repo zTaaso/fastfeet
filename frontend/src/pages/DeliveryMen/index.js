@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
+import NothingHere from '../../components/NothingHere';
 import DialogContent from './DialogContent';
 
 import generateRandomColor from '../../utils/generateRandomColor';
@@ -16,45 +17,49 @@ import api from '../../services/api';
 
 function DeliveryMen() {
   const history = useHistory();
+
+  const [searchValue, setSearchValue] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [deliverymen, setDeliverymen] = useState([]);
+  const [hasDeliverymen, setHasDeliverymen] = useState(true);
+
   const [tableContent, setTableContent] = useState({
     headItems: ['ID', 'Foto', 'Nome', 'Email', 'Ações'],
     rows: [],
   });
 
-  const wait = (ms) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('pesquisa completa');
-      }, ms);
-    });
-
-  async function getDeliveryman() {
-    await wait(2000);
-  }
-
   async function getDeliverymen() {
     try {
-      const response = await api.get('/deliveryman');
+      setLoading(true);
+
+      const response = await api.get('/deliveryman', {
+        params: { q: searchValue },
+      });
       setDeliverymen(response.data);
+      setLoading(false);
+
+      setHasDeliverymen(!!response.data[0]);
     } catch (err) {
       toast.error('Falha ao listar entregadores.');
     }
   }
 
   async function handleDelete(id) {
-    try {
-      await api.delete(`/deliveryman/${id}`, { params: { destroy: 'true' } });
-      toast.success('Entregador deletado com sucesso.');
-      getDeliverymen();
-    } catch (err) {
-      toast.error('Falha ao deletar entregador.');
+    if (window.confirm('Deletar registro permanentemente?')) {
+      try {
+        await api.delete(`/deliveryman/${id}`, { params: { destroy: 'true' } });
+        toast.success('Entregador deletado com sucesso.');
+        getDeliverymen();
+      } catch (err) {
+        toast.error('Falha ao deletar entregador.');
+      }
     }
   }
 
   useEffect(() => {
     getDeliverymen();
-  }, []);
+  }, [searchValue]);
 
   useEffect(() => {
     const rows = deliverymen.map((deliveryman) => {
@@ -86,20 +91,32 @@ function DeliveryMen() {
             type="text"
             placeholder="Buscar por entregadores"
             typeName="search"
-            onSearch={getDeliveryman}
+            onSearch={getDeliverymen}
+            loading={loading}
+            onChange={(evt) => setSearchValue(evt.target.value)}
           />
 
           <RegisterButton onClick={() => goToRegister(history)} />
         </div>
       </header>
 
-      <Table
-        headItems={tableContent.headItems}
-        bodyRows={tableContent.rows}
-        dialog={{ Component: DialogContent, title: 'Entregador' }}
-        category="deliverymen"
-        handleDelete={handleDelete}
-      />
+      {hasDeliverymen ? (
+        <Table
+          headItems={tableContent.headItems}
+          bodyRows={tableContent.rows}
+          dialog={{ Component: DialogContent, title: 'Entregador' }}
+          category="deliverymen"
+          handleDelete={handleDelete}
+          loading={loading}
+          optionsList={[
+            { key: 'view', label: 'Visualizar' },
+            { key: 'edit', label: 'Editar' },
+            { key: 'delete', label: 'Excluir' },
+          ]}
+        />
+      ) : (
+        <NothingHere>Nenhum entregador foi encontrado.</NothingHere>
+      )}
     </>
   );
 }

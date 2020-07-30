@@ -5,7 +5,9 @@ import { useHistory } from 'react-router-dom';
 import Table from '../../components/Table';
 import Input from '../../components/Input';
 import RegisterButton from '../../components/RegisterButton';
+import NothingHere from '../../components/NothingHere';
 import DialogContent from './DialogContent';
+import ProblemsFilter from './components/ProblemsFilter';
 
 import generateRandomColor from '../../utils/generateRandomColor';
 import goToRegister from '../../utils/goToRegister';
@@ -16,7 +18,13 @@ import api from '../../services/api';
 function Deliveries() {
   const history = useHistory();
 
+  const [loading, setLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
+
+  const [problemsFilter, setProblemsFilter] = useState(false);
+
   const [deliveries, setDeliveries] = useState([]);
+  const [hasDeliveries, setHasDeliveries] = useState(true);
   const [tableContent, setTableContent] = useState({
     headItems: [
       'ID',
@@ -30,39 +38,36 @@ function Deliveries() {
     rows: [],
   });
 
-  const wait = (ms) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('pesquisa completa');
-      }, ms);
-    });
-
-  async function searchDelivery() {
-    await wait(2000);
-  }
-
   async function getDeliveries() {
+    setLoading(true);
+
     try {
-      const response = await api.get('/delivery');
+      const response = await api.get('/delivery', {
+        params: { q: searchValue, withProblem: problemsFilter.toString() },
+      });
       setDeliveries(response.data);
+      setHasDeliveries(!!response.data[0]);
     } catch (err) {
-      toast.error('Falha ao listar encomendas.');
+      toast.error('Falha ao buscar encomendas.');
     }
+    setLoading(false);
   }
 
   async function handleDelete(id) {
-    try {
-      await api.delete(`/delivery/${id}`, { params: { destroy: 'true' } });
-      toast.success('Encomenda deletada com sucesso.');
-      getDeliveries();
-    } catch (err) {
-      toast.error('Falha ao deletar encomenda.');
+    if (window.confirm('Deletar registro permanentemente?')) {
+      try {
+        await api.delete(`/delivery/${id}`, { params: { destroy: 'true' } });
+        toast.success('Encomenda deletada com sucesso.');
+        getDeliveries();
+      } catch (err) {
+        toast.error('Falha ao deletar encomenda.');
+      }
     }
   }
 
   useEffect(() => {
     getDeliveries();
-  }, []);
+  }, [problemsFilter, searchValue]);
 
   useEffect(() => {
     const rows = deliveries.map((delivery) => {
@@ -120,19 +125,38 @@ function Deliveries() {
             type="text"
             placeholder="Buscar por encomendas"
             typeName="search"
-            onSearch={searchDelivery}
+            onSearch={getDeliveries}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
 
           <RegisterButton onClick={() => goToRegister(history)} />
         </div>
       </header>
 
-      <Table
-        headItems={tableContent.headItems}
-        bodyRows={tableContent.rows}
-        dialog={{ Component: DialogContent, title: 'Informações da encomenda' }}
-        category="deliveries"
-        handleDelete={handleDelete}
+      {hasDeliveries ? (
+        <Table
+          headItems={tableContent.headItems}
+          bodyRows={tableContent.rows}
+          loading={loading}
+          dialog={{
+            Component: DialogContent,
+            title: 'Informações da encomenda',
+          }}
+          category="deliveries"
+          handleDelete={handleDelete}
+          optionsList={[
+            { key: 'view', label: 'Visualizar' },
+            { key: 'edit', label: 'Editar' },
+            { key: 'delete', label: 'Excluir' },
+          ]}
+        />
+      ) : (
+        <NothingHere>Nenhuma encomenda foi encontrada.</NothingHere>
+      )}
+
+      <ProblemsFilter
+        enabled={problemsFilter}
+        onClick={() => setProblemsFilter(!problemsFilter)}
       />
     </>
   );
