@@ -1,12 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-
-const rotate = keyframes`
-  from {
-    transform: rotate(360deg);
-  } to {
-    transform: rotate(0deg);
-  }
-`;
+import styled from 'styled-components';
 
 export const DialogContentStyled = styled.div`
   hr {
@@ -18,9 +10,6 @@ export const DialogContentStyled = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    svg {
-      animation: ${rotate} 1s linear infinite;
-    }
   }
 
   div.product {
