@@ -6,6 +6,12 @@ export const DialogContentStyled = styled.div`
     opacity: 0.5;
   }
 
+  div.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   div {
     h3 {
       margin-bottom: 15px;
