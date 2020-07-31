@@ -32,8 +32,8 @@ routes.get('/files', FileController.index);
 routes.post('/files', upload.single('file'), FileController.store);
 
 routes.post('/delivery/:id/problems', ProblemController.store);
-routes.get('/delivery/:id/problems', ProblemController.show);
-routes.get('/problems', ProblemController.index);
+routes.get(['/problems/:delivery_id', '/problems'], ProblemController.index);
+routes.get('/problem/:id', ProblemController.show);
 
 routes.use(authMiddleware);
 
