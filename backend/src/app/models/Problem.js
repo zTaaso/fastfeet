@@ -4,13 +4,7 @@ class Problem extends Model {
     static init(sequelize) {
         super.init(
             {
-                id: {
-                    type: Sequelize.VIRTUAL,
-                    primaryKey: true,
-                },
-                delivery_id: {
-                    type: Sequelize.INTEGER,
-                },
+                delivery_id: Sequelize.INTEGER,
                 description: Sequelize.STRING,
             },
             {
