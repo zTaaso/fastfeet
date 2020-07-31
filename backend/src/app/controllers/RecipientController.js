@@ -1,28 +1,20 @@
-import { Op } from 'sequelize';
+import { where, col, fn } from 'sequelize';
 import Recipient from '../models/Recipient';
 
 class RecipientController {
     async index(req, res) {
         const { q: query } = req.query;
 
-        if (query) {
-            const recipients = await Recipient.findAll({
-                attributes: {
-                    exclude: ['updatedAt', 'createdAt'],
-                },
-                where: {
-                    name: {
-                        [Op.substring]: query,
-                    },
-                },
-            });
-
-            return res.json(recipients);
-        }
-
         const recipients = await Recipient.findAll({
             attributes: {
                 exclude: ['updatedAt', 'createdAt'],
+            },
+            where: query && {
+                product: where(
+                    fn('LOWER', col('Recipient.name')),
+                    'LIKE',
+                    `%${query.toLowerCase()}%`
+                ),
             },
         });
 

@@ -2,8 +2,25 @@ import Problem from '../models/Problem';
 import Delivery from '../models/Delivery';
 
 class ProblemController {
-    async index(_, res) {
-        const deliveriesWithProblems = await Problem.findAll({
+    async index(req, res) {
+        const { delivery_id } = req.params;
+
+        if (delivery_id) {
+            const problems = await Problem.findAll({
+                where: {
+                    delivery_id,
+                },
+                include: [
+                    {
+                        model: Delivery,
+                        attributes: ['product'],
+                    },
+                ],
+            });
+            return res.json(problems);
+        }
+
+        const problems = await Problem.findAll({
             include: [
                 {
                     model: Delivery,
@@ -12,7 +29,7 @@ class ProblemController {
             ],
         });
 
-        return res.json(deliveriesWithProblems);
+        return res.json(problems);
     }
 
     async store(req, res) {
@@ -41,14 +58,9 @@ class ProblemController {
     async show(req, res) {
         const { id } = req.params;
 
-        const delivery = await Delivery.findByPk(id);
-        if (!delivery) {
-            return res.status(400).json({ error: 'Invalid id provided' });
-        }
-
-        const problems = await Problem.findAll({
+        const problem = await Problem.findOne({
             where: {
-                delivery_id: id,
+                id,
             },
             include: [
                 {
@@ -58,7 +70,11 @@ class ProblemController {
             ],
         });
 
-        return res.json(problems);
+        if (!problem) {
+            return res.json({ err: 'Invalid problem id provided.' });
+        }
+
+        return res.json(problem);
     }
 }
 export default new ProblemController();

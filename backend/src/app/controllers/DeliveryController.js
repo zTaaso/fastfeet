@@ -1,25 +1,15 @@
-import { Op } from 'sequelize';
+import { fn, where, col, Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
+import Problem from '../models/Problem';
 
 import transporter from '../../config/mail';
 import FileModel from '../models/File';
 
 class DeliveryController {
     async index(req, res) {
-        const { q: query } = req.query;
-
-        if (query) {
-            const deliveries = await Delivery.findAll({
-                where: {
-                    product: {
-                        [Op.substring]: query,
-                    },
-                },
-            });
-            return res.json(deliveries);
-        }
+        const { q: query, withProblem } = req.query;
 
         const deliveries = await Delivery.findAll({
             include: [
@@ -27,6 +17,10 @@ class DeliveryController {
                     model: Recipient,
                     as: 'recipient',
                     attributes: ['id', 'name', 'city', 'state'],
+                },
+                {
+                    model: Problem,
+                    as: 'problem',
                 },
                 {
                     model: DeliveryMan,
@@ -41,8 +35,21 @@ class DeliveryController {
                     ],
                 },
             ],
-            attributes: ['id'],
+            where: query && {
+                product: where(
+                    fn('LOWER', col('product')),
+                    'LIKE',
+                    `%${query.toLowerCase()}%`
+                ),
+            },
         });
+
+        if (withProblem === 'true') {
+            const deliveriesWithProblems = deliveries.filter(
+                (delivery) => !!delivery.problem
+            );
+            return res.json(deliveriesWithProblems);
+        }
 
         return res.json(deliveries);
     }
@@ -97,6 +104,7 @@ class DeliveryController {
 
     async delete(req, res) {
         const { id } = req.params;
+        const { destroy } = req.query;
 
         const delivery = await Delivery.findByPk(id, {
             include: [
@@ -111,6 +119,17 @@ class DeliveryController {
             return res
                 .status(400)
                 .json({ error: 'This delivery does not exists.' });
+        }
+
+        if (destroy === 'true') {
+            await delivery.destroy();
+            return res.json({ success: 'Delivery succesfully deleted.' });
+        }
+
+        if (delivery.canceled_at) {
+            return res
+                .status(400)
+                .json({ err: 'This delivery is alredy canceled.' });
         }
 
         delivery.canceled_at = new Date();
@@ -129,7 +148,22 @@ class DeliveryController {
     async show(req, res) {
         const { id } = req.params;
 
-        const delivery = await Delivery.findByPk(id);
+        const delivery = await Delivery.findByPk(id, {
+            include: [
+                {
+                    model: Recipient,
+                    as: 'recipient',
+                    attributes: { exclude: ['createdAt', 'updatedAt'] },
+                    // attributes: ['id', 'name', 'city', 'state'],
+                },
+                {
+                    model: DeliveryMan,
+                    as: 'deliveryman',
+
+                    attributes: ['id', 'name'],
+                },
+            ],
+        });
         if (!delivery) {
             return res.status(401).json({ error: 'Delivery not found.' });
         }

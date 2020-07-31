@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { fn, where, col } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 import FileModel from '../models/File';
 
@@ -6,28 +6,17 @@ class DeliveryManController {
     async index(req, res) {
         const { q: query } = req.query;
 
-        if (query) {
-            const deliveryMen = await DeliveryMan.findAll({
-                where: {
-                    name: {
-                        [Op.iLike]: query,
-                    },
-                },
-                include: [
-                    {
-                        model: FileModel,
-                        as: 'avatar',
-                        attributes: ['url', 'path'],
-                    },
-                ],
-            });
-            return res.json(deliveryMen);
-        }
-
         const deliveryMen = await DeliveryMan.findAll({
             include: [
                 { model: FileModel, as: 'avatar', attributes: ['url', 'path'] },
             ],
+            where: query && {
+                product: where(
+                    fn('LOWER', col('DeliveryMan.name')),
+                    'LIKE',
+                    `%${query.toLowerCase()}%`
+                ),
+            },
         });
         return res.json(deliveryMen);
     }
