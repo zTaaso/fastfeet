@@ -1,23 +1,44 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Table = styled.div`
   overflow-y: scroll;
-  padding: 10px 20px;
-  max-height: 400px;
+  max-height: 350px;
   height: 100%;
 
-  scrollbar-color: #eee;
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  display: flex;
+  justify-content: center;
 
-  /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {
-    display: none;
+    width: 0.3em;
+    height: 0.3em;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    /* background: #7d40e7; */
+    background: rgba(10, 20, 30, 0.1);
+    opacity: 0.3;
+    border-radius: 5px;
+  }
+
+  ${({ focused }) =>
+    !focused &&
+    css`
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    `}
+
+  svg.loading {
+    margin-top: 200px;
   }
 
   table {
-    width: 100%;
+    width: 97%;
     border-spacing: 0;
     border-collapse: separate;
     border-spacing: 0px 20px;
@@ -46,7 +67,7 @@ export const Table = styled.div`
         padding: 5px 20px 10px;
         color: #666666;
         font-size: 16px;
-        max-width: 900px;
+        max-width: 600px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
