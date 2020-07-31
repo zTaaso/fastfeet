@@ -49,6 +49,10 @@ class Delivery extends Model {
             foreignKey: 'signature_id',
             as: 'signature',
         });
+        this.hasOne(models.Problem, {
+            foreignKey: 'delivery_id',
+            as: 'problem',
+        });
     }
 }
 
