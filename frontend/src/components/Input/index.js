@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Proptypes from 'prop-types';
 import { AiOutlineSearch, AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 import { Input as InputStyled, Label, Form, SelectStyled } from './styles';
 
-function Input({ typeName = '', label = '', onSearch, labelWidth, ...props }) {
-  const [value, setValue] = useState('');
-  const [loading, setLoading] = useState(false);
+function Input({
+  typeName = '',
+  label = '',
 
+  onSearch,
+  labelWidth,
+  ...props
+}) {
   if (typeName === 'label') {
     return (
       <Label labelWidth={labelWidth}>
@@ -18,27 +22,17 @@ function Input({ typeName = '', label = '', onSearch, labelWidth, ...props }) {
   }
 
   if (typeName === 'search') {
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-      await onSearch(value);
-      setLoading(false);
-    };
-
     return (
-      <Form onSubmit={handleSubmit} loading={loading}>
-        <InputStyled
-          {...props}
-          value={value}
-          onChange={(evt) => setValue(evt.target.value)}
-        />
+      <Form
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          onSearch();
+        }}
+      >
+        <InputStyled {...props} />
 
         <button type="submit">
-          {loading ? (
-            <AiOutlineLoading3Quarters size={20} color="FFF" />
-          ) : (
-            <AiOutlineSearch size={20} color="#FFF" />
-          )}
+          <AiOutlineSearch size={20} color="#FFF" />
         </button>
       </Form>
     );
