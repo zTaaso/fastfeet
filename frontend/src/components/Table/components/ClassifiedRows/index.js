@@ -7,7 +7,7 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
   switch (category) {
     case 'deliveries': {
       classifiedRows = rows.map((row) => (
-        <tr>
+        <tr key={row.id}>
           <td>{row.formatedId}</td>
           <td>{row.recipient}</td>
           <td>
@@ -31,7 +31,7 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
 
     case 'deliverymen': {
       classifiedRows = rows.map((row) => (
-        <tr>
+        <tr key={row.description}>
           <td>{row.formatedId}</td>
           <td>
             <img src={row.avatar_url} alt={row.name} />
@@ -49,7 +49,7 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
 
     case 'recipients': {
       classifiedRows = rows.map((row) => (
-        <tr>
+        <tr key={row.id}>
           <td>{row.formatedId}</td>
 
           <td>{row.name}</td>
@@ -65,13 +65,16 @@ const ClassifiedRows = ({ rows = [], category, components }) => {
 
     case 'problems': {
       classifiedRows = rows.map((row) => (
-        <tr>
+        <tr key={row.description}>
           <td>{row.formatedDeliveryId}</td>
 
           <td>{row.description}</td>
 
           <td>
-            <ActionsBtn.Component {...ActionsBtn.props} id={row.id} />
+            <ActionsBtn.Component
+              {...ActionsBtn.props}
+              id={{ delivery: row.delivery_id, problem: row.id }}
+            />
           </td>
         </tr>
       ));
