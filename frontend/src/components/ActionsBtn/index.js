@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Proptypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { BsThreeDots, BsFillTrashFill } from 'react-icons/bs';
 import { AiFillEye } from 'react-icons/ai';
@@ -8,11 +9,21 @@ import Dialog from '../Dialog';
 
 import { ActionButton, Options, Button } from './styles';
 
-function ActionsBtn({ id, dialog, handleDelete }) {
+function ActionsBtn({ id, dialog, handleDelete, optionsList = [] }) {
   const history = useHistory();
 
   const [isToggled, setIsToggled] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [enabledOptions, setEnabledOptions] = useState([]);
+
+  const toggleProps = {
+    onMouseOver: () => {
+      setIsToggled(true);
+    },
+    onMouseOut: () => {
+      setIsToggled(false);
+    },
+  };
 
   function handleViewClick() {
     setIsDialogOpen(true);
@@ -23,10 +34,67 @@ function ActionsBtn({ id, dialog, handleDelete }) {
   }
 
   function handleDeleteClick() {
-    if (window.confirm('Deletar registro permanentemente?')) {
-      handleDelete(id);
-    }
+    handleDelete(id);
   }
+
+  const options = [
+    {
+      name: 'view',
+      Component: ({ children }) => (
+        <li>
+          <Button onClick={handleViewClick}>
+            <AiFillEye size={15} color="#8E5BE8" />
+            <span>{children}</span>
+          </Button>
+        </li>
+      ),
+    },
+    {
+      name: 'edit',
+      Component: ({ children }) => (
+        <li>
+          <Button onClick={handleEditClick}>
+            <MdEdit size={15} color="#4D85EE" />
+            <span>{children}</span>
+          </Button>
+        </li>
+      ),
+    },
+    {
+      name: 'delete',
+      Component: ({ children }) => (
+        <li>
+          <Button onClick={handleDeleteClick}>
+            <BsFillTrashFill size={15} color="#DE3B3B" />
+            <span>{children}</span>
+          </Button>
+        </li>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    const enabled = options
+      .map((opt) => {
+        const option = optionsList.find((op) => op.key === opt.name);
+
+        if (option) {
+          return {
+            ...opt,
+            label: option.label,
+          };
+        }
+
+        return opt;
+      })
+      .filter((opt) => {
+        const isEnabled = optionsList.find((option) => option.key === opt.name);
+
+        return !!isEnabled;
+      });
+
+    setEnabledOptions(enabled);
+  }, []);
 
   return (
     <ActionButton>
@@ -37,12 +105,7 @@ function ActionsBtn({ id, dialog, handleDelete }) {
         onClick={() => {
           setIsToggled(!isToggled);
         }}
-        onMouseOver={() => {
-          setIsToggled(true);
-        }}
-        onMouseOut={() => {
-          setIsToggled(false);
-        }}
+        {...toggleProps}
       />
 
       <Dialog
@@ -53,33 +116,10 @@ function ActionsBtn({ id, dialog, handleDelete }) {
         <dialog.Component id={id} />
       </Dialog>
 
-      <Options
-        visible={isToggled}
-        onMouseOver={() => {
-          setIsToggled(true);
-        }}
-        onMouseOut={() => {
-          setIsToggled(false);
-        }}
-      >
-        <li>
-          <Button onClick={handleViewClick}>
-            <AiFillEye size={15} color="#8E5BE8" />
-            <span>Visualizar</span>
-          </Button>
-        </li>
-        <li>
-          <Button onClick={handleEditClick}>
-            <MdEdit size={15} color="#4D85EE" />
-            <span>Editar</span>
-          </Button>
-        </li>
-        <li>
-          <Button onClick={handleDeleteClick}>
-            <BsFillTrashFill size={15} color="#DE3B3B" />
-            <span>Excluir</span>
-          </Button>
-        </li>
+      <Options visible={isToggled} {...toggleProps}>
+        {enabledOptions.map((Opt) => (
+          <Opt.Component key={Opt.label}>{Opt.label}</Opt.Component>
+        ))}
       </Options>
     </ActionButton>
   );
