@@ -92,7 +92,7 @@ function RecipientForm({ match }) {
     async function getRecipient(id) {
       const response = await api.get(`recipients/${id}`);
       setFormData(response.data);
-      setSelectedCity({ label: response.data.city, value: '' });
+      setSelectedCity({ label: response.data.city, value: response.data.city });
       setSelectedState({ label: response.data.state, value: '' });
     }
 
